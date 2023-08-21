@@ -1,0 +1,27 @@
+Código Fuente
+crear stream 
+CREATE STREAM trades_stream (p DOUBLE, s STRING, t STRING, v DOUBLE) WITH (KAFKA_TOPIC='trades-orders', VALUE_FORMAT='JSON');
+
+crear table contar_symbolos
+CREATE TABLE contar_symbolos AS SELECT s, COUNT(s) FROM trades_stream GROUP BY s EMIT CHANGES;
+
+crear table promedio
+CREATE TABLE promedio AS SELECT *, AVG(p) FROM trades_stream GROUP BY s EMIT CHANGES;
+
+
+Consulta de datos
+
+select * from contar_symbolos;
+
+select s,avg(p) from trades_stream group by s EMIT CHANGES;
+
+CREATE TABLE promedio_symbolos AS SELECT s,avg(p) FROM trades_stream GROUP BY s EMIT CHANGES;
+select * from promedio_symbolos;
+CREATE TABLE pro_max AS SELECT s,max(p) FROM trades_stream GROUP BY s EMIT CHANGES;
+select * from pro_max;
+CREATE TABLE pro_min AS SELECT s,min(p) FROM trades_stream GROUP BY s EMIT CHANGES;
+
+select * from pro_min;
+CREATE TABLE pro_count AS SELECT s,count(p) FROM trades_stream GROUP BY s EMIT CHANGES;
+select * from pro_count;
+
